@@ -6,15 +6,13 @@ import routers from "./routes/blog";
 const app= express();
 app.use(express.json());
 
-const MONGO_URL = "mongodb://127.0.0.1:27017";
-mongoose.connect(MONGO_URL, {
-    dbName: "mybrand",
-}).then(() => {
+const MONGO_URL = "mongodb+srv://gogo:gloria@cluster0.le5cbfi.mongodb.net/";
+mongoose.connect(MONGO_URL).then(() => {
     console.log("Database connected");
 }).catch((error) => console.log(error));
 
-app.use('/', router);
-app.use('/', routers);
+app.use('/user', router);
+app.use('/blog', routers);
 app.listen(4000, () => {
     console.log(`Server running on http://localhost:4000`);
 });
