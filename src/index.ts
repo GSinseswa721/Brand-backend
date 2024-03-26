@@ -8,7 +8,7 @@ import logger from "./utils/logger"
 
 
 
-const app= express();
+export const app= express();
 const port = 4000;
 app.use(express.json());
 
