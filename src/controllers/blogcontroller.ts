@@ -58,7 +58,7 @@ class BlogController{
         }
     }
 
-    DeleteBlog = async (request: express.Request, response: express.Response) =>{
+    deleteBlog = async (request: express.Request, response: express.Response) =>{
         try {
             const {id} = request.params;
             await BlogModel.findByIdAndDelete({_id:id});
