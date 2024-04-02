@@ -1,228 +1,144 @@
+import request from 'supertest'; // Install using `npm install --save-dev supertest`
 import express from 'express';
-import { Request, Response } from 'express';
 import BlogController from '../controllers/blogcontroller';
 import { BlogModel } from '../models/blog';
 
-jest.mock('../models/blog');
+jest.mock('../models/blog', () => ({
+  find: jest.fn(),
+  findById: jest.fn(),
+  create: jest.fn(),
+  findByIdAndUpdate: jest.fn(),
+  findByIdAndDelete: jest.fn(),
+}));
+
+const app = express();
+app.use(express.json());
 
 describe('BlogController', () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-
-  beforeEach(() => {
-    req = {};
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      sendStatus: jest.fn()
-    };
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('getAllBlog', () => {
     it('should return all blogs', async () => {
-      const blogs = [{ title: 'Blog 1', content: 'Content 1' }, { title: 'Blog 2', content: 'Content 2' }];
-      (BlogModel as any).find.mockResolvedValue(blogs);
+      const mockBlogs = [{ title: 'Blog 1', content: 'Content 1' }, { title: 'Blog 2', content: 'Content 2' }];
+      (BlogModel.find as jest.Mock).mockResolvedValue(mockBlogs);
 
-      await BlogController.getAllBlog(req as Request, res as Response);
-
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ data: blogs });
+      const response = await request(app).get('/blogs');
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual(mockBlogs);
     });
 
-    it('should handle error and send status 400', async () => {
-      (BlogModel as any).find.mockRejectedValue(new Error('Database error'));
+    it('should handle errors', async () => {
+      (BlogModel.find as jest.Mock).mockRejectedValue(new Error('Database error'));
 
-      await BlogController.getAllBlog(req as Request, res as Response);
-
-      expect(res.sendStatus).toHaveBeenCalledWith(400);
+      const response = await request(app).get('/blogs');
+      expect(response.status).toBe(400);
     });
   });
-});
-
-//testing creating blog
-
-describe('BlogController', () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-
-  beforeEach(() => {
-    req = {
-      body: {},
-    };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      sendStatus: jest.fn(),
-    };
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('createBlog', () => {
-    it('should create a new blog successfully', async () => {
-      const title = 'Test Blog';
-      const content = 'Lorem ipsum dolor sit amet';
-      const image = 'test.jpg';
-
-      req.body = { title, content, image };
-      const blogMock = {
-        save: jest.fn(),
-      };
-      (BlogModel as any).mockReturnValue(blogMock);
-
-      await BlogController.createBlog(req as Request, res as Response);
-      expect(BlogModel).toHaveBeenCalledWith({ title, content, image });
-      expect(blogMock.save).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(201);
-
-    });
-
-    it('should handle error during blog creation and send status 400', async () => {
-      req.body = { title: 'Test Blog', content: 'Lorem ipsum dolor sit amet', image: 'test.jpg' };
-      (BlogModel as any).mockImplementation(() => {
-        throw new Error('Database error');
+  
+  describe('BlogController', () => {
+    describe('createBlog', () => {
+      it('should create a new blog', async () => {
+        const mockBlog = { title: 'New Blog', content: 'New Content', image: 'http://example.com/image.jpg' };
+        (BlogModel.create as jest.Mock).mockResolvedValue(mockBlog);
+  
+        const response = await request(app)
+          .post('/blogs')
+          .field('title', 'New Blog')
+          .field('content', 'New Content')
+          .attach('image', 'test.jpg'); // assuming you're uploading a file
+        expect(response.status).toBe(201);
+        expect(response.body.data).toEqual(mockBlog);
       });
-
-      await BlogController.createBlog(req as Request, res as Response);
-
-      expect(BlogModel).toHaveBeenCalled();
-      expect(res.sendStatus).toHaveBeenCalledWith(400);
+  
+      it('should handle error if no file uploaded', async () => {
+        const response = await request(app)
+          .post('/blogs')
+          .send({ title: 'New Blog', content: 'New Content' });
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('No file uploaded');
+      });
+  
+      it('should handle errors', async () => {
+        (BlogModel.create as jest.Mock).mockRejectedValue(new Error('Database error'));
+  
+        const response = await request(app)
+          .post('/blogs')
+          .field('title', 'New Blog')
+          .field('content', 'New Content')
+          .attach('image', 'test.jpg');
+        expect(response.status).toBe(400);
+      });
     });
   });
-});
-
-//updating 
-
-
-describe('BlogController - updateBlog', () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-
-  beforeEach(() => {
-    req = { params: { id: '123' }, body: { title: 'Updated Title', content: 'Updated Content', image: 'updated-image.jpg' } };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      sendStatus: jest.fn()
-    };
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should update blog by id', async () => {
-    const blogId = '123';
-    const updatedTitle = 'Updated Title';
-    const updatedContent = 'Updated Content';
-    const updatedImage = 'updated-image.jpg';
-
-    const saveMock = jest.fn().mockResolvedValueOnce({
-      _id: blogId,
-      title: updatedTitle,
-      content: updatedContent,
-      image: updatedImage,
-      save: jest.fn().mockResolvedValueOnce({ 
-        _id: blogId,
-        title: updatedTitle,
-        content: updatedContent,
-        image: updatedImage,
-      })
+  describe('BlogController', () => {
+    describe('deleteBlog', () => {
+      it('should delete a blog', async () => {
+        const mockId = '1234567890abcdef12345678'; // Sample ID
+        (BlogModel.findByIdAndDelete as jest.Mock).mockResolvedValue(null);
+  
+        const response = await request(app).delete(`/blogs/${mockId}`);
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Blog deleted');
+      });
+  
+      it('should handle errors', async () => {
+        const mockId = '1234567890abcdef12345678'; // Sample ID
+        (BlogModel.findByIdAndDelete as jest.Mock).mockRejectedValue(new Error('Database error'));
+  
+        const response = await request(app).delete(`/blogs/${mockId}`);
+        expect(response.status).toBe(400); 
+      });
     });
-    return saveMock;
+  }); 
 
-    await BlogController.updateBlog(req as Request, res as Response);
-
-    expect(BlogModel.findById).toHaveBeenCalledWith(blogId);
-    expect(res.status).toHaveBeenCalledWith(201);
-   
-  });
-});
-
-// deleting
-
-
-describe('BlogController - deleteBlog', () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-
-  beforeEach(() => {
-    req = { params: { id: '123' } };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      sendStatus: jest.fn()
-    };
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should delete blog by id', async () => {
-    const blogId = '123';
-
-    (BlogModel as any).findByIdAndDelete.mockResolvedValueOnce({});
-
-    await BlogController.deleteBlog(req as Request, res as Response);
-
-    expect(BlogModel.findByIdAndDelete).toHaveBeenCalledWith({_id: blogId});
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Blog deleted' });
-  });
-
-  it('should handle error and send status 400', async () => {
-    (BlogModel as any).findByIdAndDelete.mockRejectedValueOnce(new Error('Database error'));
-
-    await BlogController.deleteBlog(req as Request, res as Response);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(400);
-  });
-});
-
-//one blog
-
-describe('BlogController - getBlog', () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-
-  beforeEach(() => {
-    req = { params: { id: '123' } };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      sendStatus: jest.fn()
-    };
+  describe('BlogController', () => {
+    describe('updateBlog', () => {
+      it('should update a blog', async () => {
+        const mockId = '1234567890abcdef12345678'; // Sample ID
+        const mockRequestBody = {
+          title: 'Updated Title',
+          content: 'Updated Content',
+        };
+        const mockUpdatedBlog = {
+          _id: mockId,
+          title: mockRequestBody.title,
+          content: mockRequestBody.content,
+          image: 'https://example.com/image.jpg',
+        };
+        (BlogModel.findById as jest.Mock).mockResolvedValue(mockUpdatedBlog);
+        (BlogModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(mockUpdatedBlog);
+  
+        const response = await request(app)
+          .put(`/blogs/${mockId}`)
+          .send(mockRequestBody);
+  
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Blog updated');
+        expect(response.body.data).toEqual(mockUpdatedBlog);
+      });
+  
+      it('should handle blog not found', async () => {
+        const mockId = 'nonexistentId';
+        (BlogModel.findById as jest.Mock).mockResolvedValue(null);
+  
+        const response = await request(app)
+          .put(`/blogs/${mockId}`)
+          .send({});
+  
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('No Blog Found');
+      });
+  
+      it('should handle internal server error', async () => {
+        const mockId = '1234567890abcdef12345678'; // Sample ID
+        (BlogModel.findById as jest.Mock).mockRejectedValue(new Error('Database error'));
+  
+        const response = await request(app)
+          .put(`/blogs/${mockId}`)
+          .send({});
+  
+        expect(response.status).toBe(500);
+        expect(response.body.Message).toBe('Internal server error');
+      });
+    });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should get blog by id', async () => {
-    const blogId = '123';
-    const blogMock = { _id: blogId, title: 'Test Blog', content: 'Lorem ipsum dolor sit amet', image: 'test.jpg' };
-
-    (BlogModel as any).findById.mockResolvedValueOnce(blogMock);
-
-    await BlogController.getBlog(req as Request, res as Response);
-
-    expect(BlogModel.findById).toHaveBeenCalledWith(blogId);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ data: blogMock });
-  });
-
-  it('should handle error and send status 400', async () => {
-    (BlogModel as any).findById.mockRejectedValueOnce(new Error('Database error'));
-
-    await BlogController.getBlog(req as Request, res as Response);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(400);
-  });
 });
