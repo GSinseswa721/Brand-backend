@@ -84,7 +84,7 @@ router.post('/', usercontroller.createUser);
  *     tags: [Users]
  *     summary: Get all users
  *     security:
- *       - bearerAuth: [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhcmFoQGdtYWlsLmNvbSIsIm5hbWUiOiJTYXJhaCIsImlhdCI6MTcxMTEwNTQwMSwiZXhwIjoxNzExMTA5MDAxfQ.5i9779D-e3fQsPPcy46uQPIOQaKP99J3Sw3fYTPKHGM] # Input your token here
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Returns all users
