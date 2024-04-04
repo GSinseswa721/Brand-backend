@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import mongoose, { connect } from "mongoose";
 import router from "./routes/user";
 import routers from "./routes/blog";
