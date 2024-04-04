@@ -20,6 +20,10 @@ app.use('/user', router);
 app.use('/blog', routers);
 app.use('/message', messageRouter)
 
+app.get('/', (req: Request, res: Response) => {
+    res.send({ message: "Hello from My Brand" })
+});
+
 app.listen(4000, async () => {
     console.log(`Server running on http://localhost:4000`);
 
