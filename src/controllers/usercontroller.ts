@@ -5,6 +5,9 @@ import { GeneratePassword, GenerateSalt, comparePassword } from "../utils/passwo
 
 
 class UserController {
+    getUserById(arg0: string, isAuthenticated: (req: express.Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: express.Response<any, Record<string, any>>, next: express.NextFunction) => Promise<void | express.Response<any, Record<string, any>>>, getUserById: any) {
+        throw new Error("Method not implemented.");
+    }
 
     getAllUser = async (request: express.Request, response: express.Response) => {
         try {

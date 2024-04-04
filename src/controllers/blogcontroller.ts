@@ -1,5 +1,6 @@
 import express, { request } from "express";
 import { BlogModel } from "../models/blog";
+import uploadFile from "../utils/cloudinary";
 
 class BlogController{
 
@@ -26,11 +27,16 @@ class BlogController{
 
     createBlog = async (request: express.Request, response: express.Response) => {
         try {
-            const {title, content, image} = request.body;
+            const {title, content} = request.body;
+            if (!request.file) {
+                return response.status(400).json({ message: 'No file uploaded' });
+            }
+            const image:any = await uploadFile(request.file,response)
+            console.log(image);
             const blog = new BlogModel({
                title,
                content,
-               image, 
+               image:image.secure_url, 
             });
             await blog.save();
             return response.status(201).json({message:" Blog created", data: blog})
@@ -38,27 +44,34 @@ class BlogController{
         } catch (error){
             return response.sendStatus(400);
         }
-    }
+    } 
     updateBlog = async (request: express.Request, response: express.Response) =>{
-        try{
             const {id} = request.params;
             const {title, content, image} = request.body;
 
-            const blog = await BlogModel.findById(id);
-            if(blog){
-                blog.title = title;
-                blog.content = content;
-                blog.image = blog.image;
-                await blog.save();
-                return response.status(200).json({message: "Blog updated", data: blog})
+            const blog = await BlogModel.findById({_id:id});
+            if (!blog) {
+                return response.status(404).json({ message: "No Blog Found" });
             }
-            return response.sendStatus(400);
-        }catch (error){
-            return response.sendStatus(400);
+            try{
+                if (title) blog.title = title;
+                if (content) blog.content = content;
+                if (request.file) {
+                    const blogImage: any = await uploadFile(request.file, response);
+                    blog.image = blogImage.secure_url;
+                }
+                const updatedBlog = await BlogModel.findByIdAndUpdate({ _id:id },blog, { new: true })
+                return response.status(200).json({message: "Blog updated", data: updatedBlog})
+            
+            //return response.sendStatus(400);
+        } catch (error) {
+            console.log(error)
+            return response.status(500).json({ "Message": "Internal server error" });
+          
         }
     }
 
-    DeleteBlog = async (request: express.Request, response: express.Response) =>{
+    deleteBlog = async (request: express.Request, response: express.Response) =>{
         try {
             const {id} = request.params;
             await BlogModel.findByIdAndDelete({_id:id});
@@ -69,4 +82,6 @@ class BlogController{
         }
     }
 }
+
+
 export default new BlogController();

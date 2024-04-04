@@ -5,10 +5,15 @@ import isAuthenticated from "../utils/verifytoken";
 const router = express.Router();
 /**
  * @openapi
+ * tags:
+ *   name: Users
+ *   description: User APIs
+ */
+/**
+ * @openapi
  * /user:
  *   post:
- *     tags:
- *       - CreateUser
+ *     tags: [Users]
  *     summary: Create a new user
  *     requestBody:
  *       required: true
@@ -36,12 +41,66 @@ const router = express.Router();
 
 router.post('/', usercontroller.createUser);
 
+
+
+
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     tags:[Users]
+ *     summary: Get all users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns all users
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       400:
+ *         description: Bad request
+ *
+ * securitySchemes:
+ *   bearerAuth:
+ *     type: http
+ *     scheme: bearer
+ *     bearerFormat: JWT
+ */
+
+/**
+ * @openapi
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get all users
+ *     security:
+ *       - bearerAuth: [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhcmFoQGdtYWlsLmNvbSIsIm5hbWUiOiJTYXJhaCIsImlhdCI6MTcxMTEwNTQwMSwiZXhwIjoxNzExMTA5MDAxfQ.5i9779D-e3fQsPPcy46uQPIOQaKP99J3Sw3fYTPKHGM] # Input your token here
+ *     responses:
+ *       200:
+ *         description: Returns all users
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       400:
+ *         description: Bad request
+ */
+
+router.post('/user', isAuthenticated, usercontroller.createUser);
+
 /**
  * @openapi
  * /user/signin:
  *   post:
- *     tags:
- *       - SignIn
+ *     tags: [Users]
  *     summary: Sign in with email and password
  *     requestBody:
  *       required: true
@@ -68,78 +127,13 @@ router.post('/', usercontroller.createUser);
 
 router.post('/signin', usercontroller.SignIn);
 
-/**
- * @openapi
- * /user:
- *   get:
- *     tags:
- *       - GetAllUsers
- *     summary: Get all users
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Returns all users
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- */
-
-router.use(isAuthenticated, usercontroller.getAllUser);
-
-/**
- * @openapi
- * /user:
- *   get:
- *     tags:
- *       - GetAllUsers
- *     summary: Get all users
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Returns all users
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- */
-router.get('/', isAuthenticated,usercontroller.getAllUser);
-
-
-/**
- * @openapi
- * /user/byid/{id}:
- *   get:
- *     tags:
- *       - GetUserById
- *     summary: Get user by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: User ID
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Returns the user
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- */
-router.get('/byid/:id',isAuthenticated, usercontroller.getUser);
 
 /**
  * @openapi
  * /user/{id}:
  *   put:
  *     tags:
- *       - UpdateUser
+ *       - Users
  *     summary: Update user by ID
  *     parameters:
  *       - in: path
@@ -170,14 +164,76 @@ router.get('/byid/:id',isAuthenticated, usercontroller.getUser);
  *       400:
  *         description: Bad request
  */
-router.put('/:id',isAuthenticated, usercontroller.updateUser);
+
+
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get all users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns all users
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       400:
+ *         description: Bad request
+ */
+
+router.use(isAuthenticated, usercontroller.getAllUser);
+
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get all users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns all users
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       400:
+ *         description: Bad request
+ */
+router.get('/', isAuthenticated,usercontroller.getAllUser);
+
+
+/**
+ * @openapi
+ * /user/byid/{id}:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get user by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User ID
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns the user
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       400:
+ *         description: Bad request
+ */
+router.get('/byid/:id',isAuthenticated, usercontroller.getUser)
 
 /**
  * @openapi
  * /user/{id}:
  *   delete:
- *     tags:
- *       - DeleteUser
+ *     tags: [Users]
  *     summary: Delete user by ID
  *     parameters:
  *       - in: path
