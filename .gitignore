@@ -1,7 +1,4 @@
 node_modules
 
-*.log
-
 .env
-package.json
-src/routes/user.ts
+
