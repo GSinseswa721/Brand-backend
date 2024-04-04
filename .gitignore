@@ -1,5 +1,8 @@
 node_modules
-
-*.log
-
 .env
+package-lock.json
+/dist
+dist
+yarn.lock
+/coverage
+coverage
