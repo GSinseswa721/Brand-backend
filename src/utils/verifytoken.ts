@@ -16,7 +16,7 @@ declare global {
     }
 }
 
-const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+const isAuthenticated:any = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token =
             req.headers &&
