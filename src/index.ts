@@ -4,6 +4,7 @@ import router from "./routes/user";
 import routers from "./routes/blog";
 import swaggerDocs from "./utils/swagger";
 import messageRouter from "./routes/message";
+import cors from "cors"
 
 
 
@@ -11,6 +12,7 @@ export const app= express();
 const port = 4000;
 app.use(express.json());
 
+app.use(cors({ origin: "*" }));
 const MONGO_URL = "mongodb+srv://gogo:gloria@cluster0.le5cbfi.mongodb.net/";
 mongoose.connect(MONGO_URL).then(() => {
     console.log("Database connected");
