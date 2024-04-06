@@ -1,7 +1,12 @@
 import express from 'express';
 import blogcontroller from '../controllers/blogcontroller';
 import upload from '../utils/mult';
+
 //import isAuthenticated from '../utils/verifytoken';
+
+
+// Middleware for parsing JSON and handling URL-encoded form data
+
 
 const routers = express.Router();
 
@@ -13,6 +18,22 @@ const routers = express.Router();
  * tags:
  *   name: Blog
  *   description: Operations for blog
+ * 
+ *     "servers": [
+ *  {
+ *           "url": "https://https://brand-backend-zqib.onrender.com/",
+ *          "description": "Live Production Server",
+            "variables": {}
+        },
+        {
+            "url": "http://localhost:4000",
+            "description": "Local Development Server",
+            "variables": {}
+        }
+    ]
+ * 
+ * 
+ * 
  */
 
 /**

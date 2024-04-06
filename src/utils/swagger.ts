@@ -21,6 +21,19 @@ const options: swaggerJsdoc.Options = {
                 },
             },
         },
+        servers: [
+            {
+                url: 'http://localhost:4000',
+                description: 'Local Development Server',
+                variables: {}
+            },
+            {
+                url: 'https://brand-backend-zqib.onrender.com/',
+                description: 'Live Production Server',
+                variables: {}
+            },
+        ],
+
         security: [
             {
                 bearerAuth: [],
@@ -43,6 +56,37 @@ app.get("docs.json", (req: Request, res: Response) => {
 });
 
 log.info(`Docs available at http://localhost:4000/docs`);
+log.info(` Docs available at https://brand-backend-zqib.onrender.com/docs`)
 
 };
  export default swaggerDocs;
+
+ // swagger.js
+
+//import swaggerJsdoc from 'swagger-jsdoc';
+
+/*const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Blog API',
+            version: '1.0.0',
+            description: 'API documentation for the Blog service',
+        },
+        servers: [
+            {
+                url: 'http://localhost:4000',
+                description: 'Local Development Server',
+            },
+            {
+                url: 'https://my-brand-backend-vq8n.onrender.com',
+                description: 'Live Production Server',
+            },
+        ],
+    },
+    apis: ['./src/routes/*.ts'], // Path to your route definitions
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+
+export default swaggerSpec;*/
