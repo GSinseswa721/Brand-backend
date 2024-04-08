@@ -1,12 +1,5 @@
 module.exports = {
-    //preset: 'ts-jest',
-    //testEnvironment: 'node',
-    //testMatch: ["**/**/*.test.ts"],
-    //verbose: true,
-    //forceExit: true,
-
-    
-      "preset": "ts-jest",
+    "preset": "ts-jest",
       "testEnvironment": "node",
       "rootDir": "src",
       "collectCoverage": true,
@@ -16,6 +9,6 @@ module.exports = {
           "lines": 50
         }
       }
-    
+      
   };
   
