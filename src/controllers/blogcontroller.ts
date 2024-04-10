@@ -16,8 +16,8 @@ class BlogController{
 
     getBlog = async (request: express.Request, response: express.Response) => {
         try {
-            const {id} = request.params;
-            const blog = await BlogModel.findById(id);
+            const blogId = request.params.id;
+            const blog = await BlogModel.findById(blogId);
             return response.status(200).json({data: blog})
 
         } catch (error){

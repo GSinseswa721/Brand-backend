@@ -104,7 +104,7 @@ class UserController {
                 return response.status(401).json({ message: "Incorrect password" });
             }
             const { name } = user
-            return response.status(201).json({ message: " User created", token: signToken({ email, name }) })
+            return response.status(201).json({ message: " User signed in", token: signToken({ email, name }) })
 
         } catch (error) {
             return response.sendStatus(400);
