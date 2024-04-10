@@ -41,7 +41,7 @@ const router = express.Router();
  */
 
 
-router.post('/', usercontroller.createUser);
+router.post('/signup', usercontroller.createUser);
 
 
 
@@ -185,6 +185,10 @@ router.get('/byid/:id', usercontroller.getUser)
  *         description: Bad request
  */
 router.delete('/:id', isAuthenticated, usercontroller.DeleteUser);
+
+
+
+
 router.post('/mail', mailer);
 
 
