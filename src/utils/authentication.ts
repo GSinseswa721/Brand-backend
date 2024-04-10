@@ -13,7 +13,7 @@ export const signToken = (userInfo: UserInfo): string => {
             name,
         },
         "secret",
-        { expiresIn: "1h" }
+        { expiresIn: "7d" }
     );
     return token;
 };

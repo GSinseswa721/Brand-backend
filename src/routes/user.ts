@@ -1,6 +1,8 @@
 import express  from "express";
 import usercontroller from "../controllers/usercontroller";
 import isAuthenticated from "../utils/verifytoken";
+import { mailer } from "../controllers/usercontroller";
+
 
 const router = express.Router();
 /**
@@ -43,58 +45,6 @@ router.post('/', usercontroller.createUser);
 
 
 
-
-/**
- * @openapi
- * /user:
- *   get:
- *     tags:[Users]
- *     summary: Get all users
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Returns all users
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- *
- * securitySchemes:
- *   bearerAuth:
- *     type: http
- *     scheme: bearer
- *     bearerFormat: JWT
- */
-
-/**
- * @openapi
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @openapi
- * /user:
- *   get:
- *     tags: [Users]
- *     summary: Get all users
- *     security:
- *       - bearerAuth: [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhcmFoQGdtYWlsLmNvbSIsIm5hbWUiOiJTYXJhaCIsImlhdCI6MTcxMTEwNTQwMSwiZXhwIjoxNzExMTA5MDAxfQ.5i9779D-e3fQsPPcy46uQPIOQaKP99J3Sw3fYTPKHGM] # Input your token here
- *     responses:
- *       200:
- *         description: Returns all users
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- */
-
-router.post('/user', isAuthenticated, usercontroller.createUser);
 
 /**
  * @openapi
@@ -183,25 +133,7 @@ router.post('/signin', usercontroller.SignIn);
  *         description: Bad request
  */
 
-router.use(isAuthenticated, usercontroller.getAllUser);
-
-/**
- * @openapi
- * /user:
- *   get:
- *     tags: [Users]
- *     summary: Get all users
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Returns all users
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       400:
- *         description: Bad request
- */
-router.get('/', isAuthenticated,usercontroller.getAllUser);
+router.get('/', usercontroller.getAllUser);
 
 
 /**
@@ -227,7 +159,7 @@ router.get('/', isAuthenticated,usercontroller.getAllUser);
  *       400:
  *         description: Bad request
  */
-router.get('/byid/:id',isAuthenticated, usercontroller.getUser)
+router.get('/byid/:id', usercontroller.getUser)
 
 /**
  * @openapi
@@ -253,6 +185,7 @@ router.get('/byid/:id',isAuthenticated, usercontroller.getUser)
  *         description: Bad request
  */
 router.delete('/:id', isAuthenticated, usercontroller.DeleteUser);
+router.post('/mail', mailer);
 
 
 export default router;
