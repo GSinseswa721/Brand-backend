@@ -3,7 +3,7 @@ import mongoose, { connect } from "mongoose";
 import router from "./routes/user";
 import routers from "./routes/blog";
 import swaggerDocs from "./utils/swagger";
-import messageRouter from "./routes/message";
+
 import cors from "cors"
 
 
@@ -20,7 +20,7 @@ mongoose.connect(MONGO_URL).then(() => {
 
 app.use('/user', router);
 app.use('/blog', routers);
-app.use('/message', messageRouter)
+
 
 app.get('/', (req: Request, res: Response) => {
     res.send({ message: "Hello from My Brand" })

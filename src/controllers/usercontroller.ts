@@ -2,6 +2,8 @@ import express, { request } from "express";
 import { UserModel } from "../models/user";
 import { signToken } from "../utils/authentication";
 import { GeneratePassword, GenerateSalt, comparePassword } from "../utils/password";
+import { Request, Response, NextFunction } from 'express';
+import nodemailer from 'nodemailer';
 
 
 class UserController {
@@ -109,5 +111,38 @@ class UserController {
         }
     }
 
+    
 }
+
+
+export const mailer = async (req: Request, res: Response) => {
+    const { from, subject, message } = req.body
+  
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'glorianiyonkurusinseswa@gmail.com',
+        pass: 'nxqo cfsa podu yqak',
+      },
+    });
+  
+  
+    const sendinfo:nodemailer.SendMailOptions = {
+      to: 'glorianiyonkurusinseswa@gmail.com',
+      subject: subject,
+      html: `<div><code>from: ${from}</code><b>${message}</b><div>`,
+    };
+  
+    try {
+      const sendMail = await transporter.sendMail(sendinfo);
+  
+      res.status(200).json({ message: 'Message sent successfully' });
+    } catch (error: any) {
+      console.log(error.message);
+      res.status(200).json({ message: 'Something went wrong while sending mail' });
+  
+    }
+  }
 export default new UserController();
