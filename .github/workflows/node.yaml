@@ -1,36 +1,32 @@
-name: Coverage
+name: Coveralls
 
 on:
   push:
     branches:
-      -main
+      - main
   pull_request:
     branches:
-      -main
-permissions:
- contents: read
- actions: read
- checks: write
+      - main
 
 jobs:
-  tests:
-    name: Run tests
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - name: Setup Node.js version
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: 20
+          node-version: '20'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
-      - name: Coveralls Report
-        uses: coverallsapp/github-action@v2.2.3
-        env: 
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
 
-      - name: Run tests
-        run: npm run coveralls
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+
+      - name: Send coverage to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: npm run report-coverage
