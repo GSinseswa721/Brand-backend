@@ -175,5 +175,19 @@ routers.put('/:id',upload.single("image") , blogcontroller.updateBlog);
  */
 routers.delete('/:id', blogcontroller.deleteBlog);
 
+//comments
+routers.post('/:id/comments', blogcontroller.addComment);
+
+// PUT update a comment by ID
+routers.put('/:blogId/comments/:commentId', blogcontroller.updateComment);
+
+// DELETE a comment by ID
+routers.delete('/:blogId/comments/:commentId', blogcontroller.deleteComment);
+
+// POST like a blog
+routers.post('/:id/like', blogcontroller.likeBlog);
+
+routers.get('/blogs/:id/comments', blogcontroller.getCommentsForBlog);
+
 
 export default routers;

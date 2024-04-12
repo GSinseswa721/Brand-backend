@@ -14,7 +14,25 @@ const BlogSchema = new mongoose.Schema(
         image: {
             type: String,
             required:false,
-        }
+        },
+
+        comments: [
+            {
+              author: String,
+              comment: String,
+              date: { type: Date, default: Date.now },
+            },
+          ],
+          likes: {
+            type: Number,
+            default: 0
+          },
+          dislikes: {
+            type: Number,
+            default: 0
+          }
+
+
     },
         {timestamps:true}
 );
