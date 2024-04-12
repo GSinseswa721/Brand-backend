@@ -119,6 +119,7 @@ class BlogController{
         try {
           const { id: blogId } = request.params;
     
+
           response.status(200).json({ data: comments });
         } catch (error) {
           console.error(error);
@@ -196,6 +197,23 @@ class BlogController{
           response.status(500).json({ message: 'Internal server error' });
         }
       };
+      getLikesForBlog: RequestHandler = async (req: Request, res: Response) => {
+        try {
+          const { id } = req.params;
+    
+          const blog: IBlog | null = await BlogModel.findById(id);
+          if (!blog) {
+            return res.status(404).json({ message: 'Blog not found' });
+          }
+    
+          const likesCount: number = blog.likes;
+          return res.status(200).json({ likes: likesCount });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Internal server error' });
+        }
+      };
+
 
     }
     
