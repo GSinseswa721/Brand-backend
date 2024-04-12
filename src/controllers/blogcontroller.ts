@@ -1,8 +1,7 @@
-import express, { request } from "express";
+import express, { RequestHandler, request } from "express";
 import { BlogModel } from "../models/blog";
 import uploadFile from "../utils/cloudinary";
 import { Request, Response } from 'express';
-import CommentModel, { IComment } from '../models/comment';
 
 class BlogController{
 
@@ -120,7 +119,6 @@ class BlogController{
         try {
           const { id: blogId } = request.params;
     
-          const comments = await CommentModel.find({ blog: blogId });
           response.status(200).json({ data: comments });
         } catch (error) {
           console.error(error);
@@ -198,7 +196,6 @@ class BlogController{
           response.status(500).json({ message: 'Internal server error' });
         }
       };
-
 
     }
     
