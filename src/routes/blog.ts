@@ -188,6 +188,21 @@ routers.delete('/:blogId/comments/:commentId', blogcontroller.deleteComment);
 routers.post('/:id/like', blogcontroller.likeBlog);
 
 routers.get('/blogs/:id/comments', blogcontroller.getCommentsForBlog);
+//comments
+routers.post('/:id/comments', blogcontroller.addComment);
+
+// PUT update a comment by ID
+routers.put('/:blogId/comments/:commentId', blogcontroller.updateComment);
+
+// DELETE a comment by ID
+routers.delete('/:blogId/comments/:commentId', blogcontroller.deleteComment);
+
+// POST like a blog
+routers.post('/:id/like', blogcontroller.likeBlog);
+
+routers.get('/blogs/:id/comments', blogcontroller.getCommentsForBlog);
+
+routers.get('/blogs/:id/likes', blogcontroller.getLikesForBlog);
 
 
 export default routers;
