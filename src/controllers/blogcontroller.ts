@@ -2,7 +2,6 @@ import express, { RequestHandler, request } from "express";
 import { BlogModel } from "../models/blog";
 import uploadFile from "../utils/cloudinary";
 import { Request, Response } from 'express';
-import CommentModel, { IBlog, IComment } from '../models/comment';
 
 class BlogController{
 
@@ -120,8 +119,6 @@ class BlogController{
         try {
           const { id: blogId } = request.params;
     
-          const comments: IComment[] = await CommentModel.find({ blog: blogId });
-    
           response.status(200).json({ data: comments });
         } catch (error) {
           console.error(error);
@@ -199,24 +196,6 @@ class BlogController{
           response.status(500).json({ message: 'Internal server error' });
         }
       };
-      getLikesForBlog: RequestHandler = async (req: Request, res: Response) => {
-        try {
-          const { id } = req.params;
-    
-          const blog: IBlog | null = await BlogModel.findById(id);
-          if (!blog) {
-            return res.status(404).json({ message: 'Blog not found' });
-          }
-    
-          const likesCount: number = blog.likes;
-          return res.status(200).json({ likes: likesCount });
-        } catch (error) {
-          console.error(error);
-          return res.status(500).json({ message: 'Internal server error' });
-        }
-      };
-
-      
 
     }
     

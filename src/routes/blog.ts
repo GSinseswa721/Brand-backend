@@ -189,8 +189,5 @@ routers.post('/:id/like', blogcontroller.likeBlog);
 
 routers.get('/blogs/:id/comments', blogcontroller.getCommentsForBlog);
 
-routers.get('/blogs/:id/likes', blogcontroller.getLikesForBlog);
-
-
 
 export default routers;
