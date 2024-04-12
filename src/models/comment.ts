@@ -29,6 +29,11 @@ const commentSchema: Schema = new Schema({
   blog: { type: Schema.Types.ObjectId, ref: 'Blog', required: true },
 });
 
+export interface IBlog extends Document {
+  likes: number;
+  dislikes: number;
+}
+
 const CommentModel = mongoose.model<IComment>('Comment', commentSchema);
 
 export default CommentModel;
